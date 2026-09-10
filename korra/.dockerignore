@@ -1,0 +1,10 @@
+.git
+.github
+.vscode
+__pycache__
+*.pyc
+.pytest_cache
+.langgraph_api
+.env
+react_agent.egg-info
+korra_files.db

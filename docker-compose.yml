@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: ./korra
+      dockerfile: Dockerfile
+    container_name: korra-backend
+    ports:
+      - "2024:2024"
+    env_file:
+      - ./korra/.env
+    environment:
+      ENABLE_INTERRUPTS: "false"
+      KORRA_DB_PATH: /app/korra_files.db
+    volumes:
+      - ./korra/korra_files.db:/app/korra_files.db
+    networks:
+      - korra-network
+
+  frontend:
+    build:
+      context: ./agent-chat-ui
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3000/api
+        NEXT_PUBLIC_ASSISTANT_ID: agent
+    container_name: korra-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      LANGGRAPH_API_URL: http://backend:2024
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+      NEXT_PUBLIC_ASSISTANT_ID: agent
+      LANGSMITH_API_KEY: ""
+    networks:
+      - korra-network
+
+networks:
+  korra-network:
+    driver: bridge
